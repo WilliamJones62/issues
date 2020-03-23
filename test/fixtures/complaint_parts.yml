@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  complaint_id: 1
+  part_code: MyString
+  part_desc: MyString
+  uom: MyString
+  qty: 9.99
+  invoice_qty: 9.99
+  issue1: MyString
+  issue2: MyString
+
+two:
+  complaint_id: 1
+  part_code: MyString
+  part_desc: MyString
+  uom: MyString
+  qty: 9.99
+  invoice_qty: 9.99
+  issue1: MyString
+  issue2: MyString

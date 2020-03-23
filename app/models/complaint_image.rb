@@ -1,0 +1,2 @@
+class ComplaintImage < ApplicationRecord
+end
