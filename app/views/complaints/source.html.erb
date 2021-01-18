@@ -1,0 +1,46 @@
+<p id="notice"><%= notice %></p>
+
+<% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+  <h2>Enter Invoice, Order, Lot or PO</h2>
+<% elsif current_user.complaints_role == 'Sales' %>
+  <h2>Enter Invoice, Order or Lot</h2>
+<% elsif current_user.complaints_role == 'Inventory' %>
+  <h2>Enter Lot or PO</h2>
+<% elsif current_user.complaints_role == 'Operations' %>
+  <h2>Enter Lot or PO</h2>
+<% end %>
+
+<%= form_with url: new_complaint_path, local: true, method: 'get' do |f| %>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <th> <%= f.label(:complaints_invoice, 'Invoice:') %></th>
+        <th> <%= f.label(:complaints_order, 'Order:') %> </th>
+      <% end %>
+      <% if ['Quality', 'Sales', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+        <th> <%= f.label(:complaints_lot_numb, 'Lot:') %> </th>
+      <% end %>
+      <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+        <th> <%= f.label(:complaints_po_number, 'PO Number:') %> </th>
+      <% end %>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <td> <%= f.text_field :invoice, {id: "invoice"} %> </td>
+        <td> <%= f.text_field :order, {id: "order"} %> </td>
+      <% end %>
+      <% if ['Quality', 'Operations', 'Sales', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+        <td> <%= f.text_field :lot_numb, {id: "lot_numb"} %> </td>
+      <% end %>
+      <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+        <td> <%= f.text_field :po_number, {id: "po_number"} %> </td>
+      <% end %>
+    </tr>
+  </tbody>
+</table>
+
+  <%= f.submit "Enter" %>
+<% end %>

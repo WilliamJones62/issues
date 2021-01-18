@@ -11,45 +11,136 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :user %>
-    <%= form.text_field :user %>
-  </div>
-
-  <div class="field">
-    <%= form.label :invoice %>
-    <%= form.text_field :invoice %>
-  </div>
-
-  <div class="field">
-    <%= form.label :order %>
-    <%= form.text_field :order %>
-  </div>
-
-  <div class="field">
-    <%= form.label :lot %>
-    <%= form.text_field :lot %>
-  </div>
-
-  <div class="field">
-    <%= form.label :issue_date %>
-    <%= form.date_select :issue_date %>
-  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th> <%= form.label :user %></th>
+        <th> <%= form.label :dc, 'DC' %></th>
+        <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+          <th> <%= form.label :invoice %></th>
+          <th> <%= form.label :order %></th>
+          <th> <%= form.label :customer_code %></th>
+        <% end %>
+        <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+          <th> <%= form.label :lot %></th>
+        <% end %>
+        <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+          <th> <%= form.label :po_number, 'PO Number' %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <%= form.text_field :user, readonly: true %> </td>
+        <td> <%= form.text_field :dc, readonly: true %> </td>
+        <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+          <td> <%= form.text_field :invoice, readonly: true %></td>
+          <td> <%= form.text_field :order, readonly: true %></td>
+          <td> <%= form.text_field :customer_code, readonly: true %></td>
+        <% end %>
+        <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+          <td> <%= form.text_field :lot, readonly: true %></td>
+        <% end %>
+        <% if ['Quality', 'Operations', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+          <td> <%= form.text_field :po_number, readonly: true %></td>
+        <% end %>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th> <%= form.label :issue_date %></th>
+        <th> <%= form.label :status %></th>
+        <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+          <th> <%= form.label :rep_name %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% if @edit %>
+          <td> <%= form.date_field :issue_date %></td>
+        <% else %>
+          <td> <%= form.date_field :issue_date, value: @date_today, max: Date.today, min: Date.today - 30 %></td>
+        <% end %>
+        <% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+          <td> <%= form.select :status, @status, {}, {:value => params[:status], id: :complaint_status} %></td>
+        <% else %>
+          <td> <%= form.text_field :status, readonly: true %></td>
+        <% end %>
+        <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+          <td> <%= form.select :rep_name, @rep_names, {}, {:value => params[:rep_name], id: :complaint_rep_name} %></td>
+        <% end %>
+      </tr>
+    </tbody>
+  </table>
 
   <div class="field">
     <%= form.label :notes %>
-    <%= form.text_area :notes %>
+    <%= form.text_area :notes, size: "40x4", id: :complaint_notes %>
   </div>
 
-  <div class="field">
-    <%= form.label :status %>
-    <%= form.text_field :status %>
-  </div>
+  <% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+    <div class="field">
+      <%= form.label :qa_notes %>
+      <%= form.text_area :qa_notes, size: "40x4", id: :complaint_qa_notes %>
+    </div>
+  <% end %>
 
-  <div class="field">
-    <%= form.label :with_vendor %>
-    <%= form.check_box :with_vendor %>
-  </div>
+  <h3>Parts</h3>
+  <% i = 0 %>
+  <table class="table table-bordered">
+    <thead>
+      <tr class="sticky">
+        <th> Part code </th>
+        <th> Description </th>
+        <th> UOM </th>
+        <th> Lot </th>
+        <th> Lot Expires </th>
+        <th> Each? </th>
+        <th> Total qty </th>
+        <th> Qty with issue </th>
+        <th> Issue 1 </th>
+        <th> Issue 1 description </th>
+        <th> Issue 2 </th>
+        <th> Issue 2 description </th>
+        <th> Status </th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= form.fields_for :complaint_parts do |p| %>
+        <tr>
+          <td> <%= p.text_field :part_code, readonly: true, size: 10 %> </td>
+          <td> <%= p.text_field :part_desc, readonly: true, size: 50 %> </td>
+          <td> <%= p.text_field :uom, readonly: true, size: 3 %> </td>
+          <td> <%= p.text_field :lot_numb, readonly: true, size: 10 %> </td>
+          <td> <%= p.date_field :lot_expiry_date, readonly: true %> </td>
+          <td> <%= p.check_box :each_check %></td>
+          <td> <%= p.number_field :invoice_qty, readonly: true, min: 0, step: 0.01, max: 100 %> </td>
+          <td> <%= p.number_field :qty, id: :part_qty, min: 0, step: 0.01, max: 100 %> </td>
+          <td> <%= p.select :issue1, @issue, {:include_blank => true}, {:value => params[:complaints_issue1], :onchange=> ("issue1Description(id)")} %> </td>
+          <td> <%= p.text_area :issue1_description, readonly: true, size: "20x3" %> </td>
+          <td> <%= p.select :issue2, @issue, {:include_blank => true}, {:value => params[:complaints_issue2], :onchange=> ("issue2Description(id)")} %> </td>
+          <td> <%= p.text_area :issue2_description, readonly: true, size: "20x3" %> </td>
+          <td> <%= p.select :part_status, @status, {}, {:value => params[:part_status]} %> </td>
+        </tr>
+        <% i += 1 %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>Images</h3>
+  <%= form.fields_for :complaint_images do |image| %>
+    <div class="field">
+      <%= image.label :image %>
+      <%= image.file_field :image, :value => ' ' %>
+      <% if image.object.image? %>
+        <%= image_tag image.object.image.thumb.url %>
+      <% end %>
+    </div>
+  <% end %>
+  <br>
 
   <div class="actions">
     <%= form.submit %>

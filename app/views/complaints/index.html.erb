@@ -1,41 +1,60 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Complaints</h1>
+<h2>List</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Invoice</th>
-      <th>Order</th>
-      <th>Lot</th>
-      <th>Issue date</th>
-      <th>Notes</th>
-      <th>Status</th>
-      <th>With vendor</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @complaints.each do |complaint| %>
+<%= form_with url: complaints_closed_path, local: true, method: 'get' do |f| %>
+  <table id="listtab"  class="stripe" class="mytable" class="display" cellspacing="0" >
+    <thead>
       <tr>
-        <td><%= complaint.user %></td>
-        <td><%= complaint.invoice %></td>
-        <td><%= complaint.order %></td>
-        <td><%= complaint.lot %></td>
-        <td><%= complaint.issue_date %></td>
-        <td><%= complaint.notes %></td>
-        <td><%= complaint.status %></td>
-        <td><%= complaint.with_vendor %></td>
-        <td><%= link_to 'Show', complaint %></td>
-        <td><%= link_to 'Edit', edit_complaint_path(complaint) %></td>
-        <td><%= link_to 'Destroy', complaint, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>ID</th>
+        <th>User</th>
+        <th>Customer</th>
+        <th>Invoice</th>
+        <th>Order</th>
+        <th>Lot</th>
+        <th>PO</th>
+        <th>Issue date</th>
+        <th>Status</th>
+        <th></th>
+        <th></th>
+        <% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+          <th></th>
+          <th>Close?</th>
+          <th></th>
+        <% end %>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% x = 0 %>
+      <% @complaints.each do |complaint| %>
+        <% x += 1 %>
+        <% closedi = "closed"+x.to_s %>
+        <% idi = "id"+x.to_s %>
+        <tr>
+          <td><%= complaint.id.to_s %></td>
+          <td><%= complaint.user %></td>
+          <td><%= complaint.customer_code %></td>
+          <td><%= complaint.invoice %></td>
+          <td><%= complaint.order %></td>
+          <td><%= complaint.lot %></td>
+          <td><%= complaint.po_number %></td>
+          <td><%= display_date(complaint.issue_date) %></td>
+          <td><%= complaint.status %></td>
+          <td><%= link_to 'Show', complaint, class: "btn btn-primary" %></td>
+          <td><%= link_to 'Edit', edit_complaint_path(complaint), class: "btn btn-primary" %></td>
+          <% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+            <td><%= link_to 'Delete', complaint, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-primary" %></td>
+            <td><%= f.check_box closedi %> </td>
+            <td hidden ><%= f.text_field idi, :value => complaint[:id].to_s, :readonly => true %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= f.submit "Close Complaints" %>
+<% end %>
 
 <br>
 
-<%= link_to 'New Complaint', new_complaint_path %>
+<%= link_to 'New Issue', complaints_source_path, class: "btn btn-primary" %>

@@ -1,4 +1,4 @@
-class CreateComplaints < ActiveRecord::Migration[5.2]
+class CreateComplaints < ActiveRecord::Migration[5.1]
   def change
     create_table :complaints do |t|
       t.string :user

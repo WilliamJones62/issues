@@ -1,0 +1,20 @@
+<span class="primary-logo">
+</span>
+<h1 class="title">Issues</h1>
+
+<% if user_signed_in? %>
+  <span>Signed in as <%= @user %></span>
+  <div id="navbar">
+    <span><%= link_to 'List', complaints_path, class: "btn btn-primary" %></span>
+    <% if current_user.complaints_role == 'Quality' %>
+      <span><%= link_to 'Closed', complaints_closedlist_path, class: "btn btn-primary" %></span>
+    <% end %>
+    <span><%= link_to 'New Issue', complaints_source_path, class: "btn btn-primary" %></span>
+    <span><%= link_to 'Sign out', destroy_user_session_path, method: :delete, class: "btn btn-primary" %></span>
+  </div>
+<% else %>
+  <span>No user currently signed in</span>
+<% end %>
+<%= content_tag(:div, flash[:error], :id => "flash_error") if flash[:error] %>
+<%= content_tag(:div, flash[:alert], :id => "flash_alert") if flash[:alert] %>
+<br>

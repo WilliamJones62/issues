@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  Badge_: MyString
+  string: MyString
+  Employee_Name: MyString
+  string: MyString
+  Badge_No: MyString
+
+two:
+  Badge_: MyString
+  string: MyString
+  Employee_Name: MyString
+  string: MyString
+  Badge_No: MyString

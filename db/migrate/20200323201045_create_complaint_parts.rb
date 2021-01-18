@@ -1,4 +1,4 @@
-class CreateComplaintParts < ActiveRecord::Migration[5.2]
+class CreateComplaintParts < ActiveRecord::Migration[5.1]
   def change
     create_table :complaint_parts do |t|
       t.integer :complaint_id

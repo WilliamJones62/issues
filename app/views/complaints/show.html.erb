@@ -1,44 +1,148 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>User:</strong>
-  <%= @complaint.user %>
-</p>
+<h2>Showing Issue</h2>
 
-<p>
-  <strong>Invoice:</strong>
-  <%= @complaint.invoice %>
-</p>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>DC</th>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <th>Invoice</th>
+        <th>Order</th>
+        <th>Customer code</th>
+      <% end %>
+      <% if ['Quality', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+        <th>Lot</th>
+      <% end %>
+      <% if ['Quality', 'Operations', 'Admin'].include?(current_user.complaints_role) %>
+        <th>PO Number</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> <%= @complaint.user %></td>
+      <td> <%= @complaint.dc %></td>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <td> <%= @complaint.invoice %></td>
+        <td> <%= @complaint.order %></td>
+        <td> <%= @complaint.customer_code %></td>
+      <% end %>
+      <% if ['Quality', 'Inventory', 'Admin'].include?(current_user.complaints_role) %>
+      <td> <%= @complaint.lot %></td>
+      <% end %>
+      <% if ['Quality', 'Operations', 'Admin'].include?(current_user.complaints_role) %>
+      <td> <%= @complaint.po_number %></td>
+      <% end %>
+    </tr>
+  </tbody>
+</table>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Issue date</th>
+      <th>Status</th>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <th>Rep Name</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= display_date(@complaint.issue_date) %></td>
+      <td> <%= @complaint.status %></td>
+      <% if ['Quality', 'Sales', 'Admin'].include?(current_user.complaints_role) %>
+        <td> <%= @complaint.rep_name %></td>
+      <% end %>
+    </tr>
+  </tbody>
+</table>
 
-<p>
-  <strong>Order:</strong>
-  <%= @complaint.order %>
-</p>
+<table>
+  <thead>
+    <tr>
+      <th><strong>Notes</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @complaint.notes %></td>
+    </tr>
+  </tbody>
+</table>
 
-<p>
-  <strong>Lot:</strong>
-  <%= @complaint.lot %>
-</p>
+<% if ['Quality', 'Admin'].include?(current_user.complaints_role) %>
+  <table>
+    <thead>
+      <tr>
+        <th><strong>QA Notes</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @complaint.qa_notes %></td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
 
-<p>
-  <strong>Issue date:</strong>
-  <%= @complaint.issue_date %>
-</p>
+<h3>Parts</h3>
 
-<p>
-  <strong>Notes:</strong>
-  <%= @complaint.notes %>
-</p>
+<table id="listtab"  class="stripe" class="mytable" class="display" cellspacing="0" >
+  <thead>
+    <tr>
+      <th> Part code </th>
+      <th> Part Description </th>
+      <th> UOM </th>
+      <th> Lot </th>
+      <th> Each? </th>
+      <th> Total qty </th>
+      <th> Qty with issue </th>
+      <th> Issue 1 </th>
+      <th> Issue 2 </th>
+      <th> Status </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @complaint.complaint_parts.each do |c| %>
+      <tr>
+        <td><%= c.part_code %></td>
+        <td><%= c.part_desc %></td>
+        <td><%= c.uom %></td>
+        <td><%= c.lot_numb %></td>
+        <td> <%= human_boolean(c.each_check) %></td>
+        <td><%= c.invoice_qty %></td>
+        <td><%= c.qty %></td>
+        <td><%= c.issue1 %></td>
+        <td><%= c.issue2 %></td>
+        <td><%= c.part_status %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<p>
-  <strong>Status:</strong>
-  <%= @complaint.status %>
-</p>
+<h3>Images</h3>
 
-<p>
-  <strong>With vendor:</strong>
-  <%= @complaint.with_vendor %>
-</p>
+<table id="listtab"  class="stripe" class="mytable" class="display" cellspacing="0" >
+  <thead>
+    <tr>
+      <th> Image </th>
+      <th> Show </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @complaint.complaint_images.each do |c| %>
+      <% if !c.image.blank? %>
+      <tr>
+        <td><%= image_tag c.image.thumb.url %></td>
+        <td><%= link_to 'Show',  controller: "complaints", action: "showimage", id: c %></td>
+      </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
 
-<%= link_to 'Edit', edit_complaint_path(@complaint) %> |
-<%= link_to 'Back', complaints_path %>
+<%= link_to 'Edit', edit_complaint_path(@complaint), class: "btn btn-primary" %>
+<%= link_to 'List', complaints_path, class: "btn btn-primary" %>
+<%= link_to 'Closed', complaints_closedlist_path, class: "btn btn-primary" %>

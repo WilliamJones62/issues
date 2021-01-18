@@ -1,6 +1,7 @@
-<h1>Editing Complaint</h1>
+<h2>Editing Issue</h2>
 
 <%= render 'form', complaint: @complaint %>
-
-<%= link_to 'Show', @complaint %> |
-<%= link_to 'Back', complaints_path %>
+<br>
+<%= link_to 'Show', @complaint, class: "btn btn-primary" %>
+<%= link_to 'List', complaints_path, class: "btn btn-primary" %>
+<%= link_to 'Closed', complaints_closedlist_path, class: "btn btn-primary" %>
